@@ -4,14 +4,13 @@ library(gtools)
 library(phonfieldwork)
 source("0-Helper_CompareToGS.R")
 
-compare.files <- function(nw.filename, recording,
+compare.files <- function(nw.filename, gs.filename,
                           minute, coder, lab) {
   ################################################################################
   # Set up
   ################################################################################
   
   # nw.filename <- "VanDamFJ11-GS_Training_Round_1-TS.txt"
-  # recording <- "VanFJ11"
   # minute <- 1
   # coder <- "MC"
   # lab <- "MC"
@@ -19,13 +18,13 @@ compare.files <- function(nw.filename, recording,
   # Input files
   nw.file <- read.annot(nw.filename)
   nw.file$code[which(is.na(nw.file$code))] <- "<empty>"
-  gs.file <- read.annot(paste0("eafs/", recording, "-0GS0.eaf"))
+  gs.file <-  read.annot(gs.filename)
+  gs.file$code[which(is.na(gs.file$code))] <- "<empty>"
   
   # Input arguments
   slice_sz <- 50 # size of time slices compared
   
-  compare.stmt <- paste0("Comparing minute ", minute, " of recording ",
-                        recording, " to the gold standard.")
+  compare.stmt <- paste0("Comparing minute ", minute," to the gold standard.")
   
   coder.stmt <- paste0("Submitted by coder ", coder, " from the ", lab, " lab")
   

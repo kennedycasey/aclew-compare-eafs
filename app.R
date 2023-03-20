@@ -15,15 +15,11 @@ ui <- fluidPage(
 
       # Input: Annotation file ----
       fileInput("file1", "Choose your annotation file",
-                accept = c("text/tab-separated-values",
-                         ".txt")),
-
-      # Input: Annotated recording ----
-      selectizeInput("recording", "Which recording did you annotate?",
-                   choices = c("2337", "5271", "5959", "9909", "VanFJ11"),
-                   options = list(
-                     placeholder = 'Select a recording below',
-                     onInitialize = I('function() { this.setValue(""); }'))),
+                accept = ".eaf"),
+      
+      # Input: Annotation file ----
+      fileInput("file2", "Choose the gold-standard annotation file",
+                accept = ".eaf"),
 
       # Input: Annotated minute ----
       selectizeInput("minute", "Which minute do you want to test?",
@@ -55,10 +51,10 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   report <- eventReactive(input$submit, {
-    req(input$file1, input$recording, input$minute,
+    req(input$file1, input$file2, input$minute,
         input$coder, input$PI)
     compare.files(input$file1$datapath,
-                  input$recording,
+                  input$file2$datapath,
                   as.numeric(input$minute),
                   input$coder,
                   input$PI)
@@ -105,7 +101,7 @@ server <- function(input, output) {
   
     output$downloadErrorsHandler <- downloadHandler(
       filename = paste0("GS_comparison-",time.now,"-detected_errors-",
-             input$recording,"-minute_", input$minute,
+                        "-minute_", input$minute,
              "-by_", input$coder, "_from_", input$PI, ".csv"),
       content = function(file) {
         write.csv(errors, file, row.names = FALSE)
