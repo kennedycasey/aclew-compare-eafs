@@ -24,6 +24,9 @@ ui <- fluidPage(
       # Input: Annotated minute ----
       textInput("minute", "Which minute do you want to test?",
                 placeholder = 'Enter a number or leave blank to compare full file'),
+      
+      # Input: Optional ignore dependent tiers ----
+      checkboxInput("ignore.dep", "Ignore all dependent tiers (xds, vcm, lex, mwu)?"),
 
       # Input: Annotator's name ----
       textInput("coder", "Annotator name",
@@ -54,7 +57,8 @@ server <- function(input, output) {
                   input$file2$datapath,
                   as.numeric(input$minute),
                   input$coder,
-                  input$PI)
+                  input$PI, 
+                  input$ignore.dep)
   })
 
   output$report <- renderUI({

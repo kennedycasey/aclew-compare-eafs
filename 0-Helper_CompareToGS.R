@@ -1,15 +1,17 @@
-read.annot <- function(filename) {
+read.annot <- function(filename, ignore.dep = FALSE) {
   colnames <- c("tier","speaker","start","stop","duration","code")
   annots <- eaf_to_df(filename) %>%
+    filter(nchar(tier_name) %in% c(3, 7)) %>%
     transmute(tier = tier_name,
-              speaker = case_when(
-                str_detect(tier_name, "\\@") ~ 
-                  str_split(tier_name, "\\@", simplify = TRUE)[,2], 
-                !str_detect(tier_name, "\\@") ~ tier_name),
+              speaker = ifelse(str_detect(tier, "@"), substr(tier, nchar(tier) - 2, nchar(tier)), tier),
               start = time_start*1000, 
               stop = time_end*1000, 
               duration = time_end - time_start, 
-              code = content)
+              code = content) 
+  
+  if (ignore.dep) {
+    annots <- filter(annots, nchar(tier) == 3)
+  }
   return(annots)
 }
 

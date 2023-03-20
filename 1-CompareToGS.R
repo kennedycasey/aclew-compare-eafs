@@ -5,7 +5,7 @@ library(phonfieldwork)
 source("0-Helper_CompareToGS.R")
 
 compare.files <- function(nw.filename, gs.filename,
-                          minute, coder, lab) {
+                          minute, coder, lab, ignore.dep = FALSE) {
   ################################################################################
   # Set up
   ################################################################################
@@ -17,9 +17,9 @@ compare.files <- function(nw.filename, gs.filename,
   # lab <- "MC"
 
   # Input files
-  nw.file <- read.annot(nw.filename)
+  nw.file <- read.annot(nw.filename, ignore.dep)
   nw.file$code[which(is.na(nw.file$code))] <- "<empty>"
-  gs.file <-  read.annot(gs.filename)
+  gs.file <-  read.annot(gs.filename, ignore.dep)
   gs.file$code[which(is.na(gs.file$code))] <- "<empty>"
   
   # Input arguments
