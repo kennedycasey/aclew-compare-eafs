@@ -1,6 +1,15 @@
 read.annot <- function(filename) {
   colnames <- c("tier","speaker","start","stop","duration","code")
-  annots <- read_tsv(filename, col_names = colnames)
+  annots <- eaf_to_df(filename) %>%
+    transmute(tier = tier_name,
+              speaker = case_when(
+                str_detect(tier_name, "\\@") ~ 
+                  str_split(tier_name, "\\@", simplify = TRUE)[,2], 
+                !str_detect(tier_name, "\\@") ~ tier_name),
+              start = time_start, 
+              stop = time_end, 
+              duration = time_end - time_start, 
+              code = content)
   return(annots)
 }
 

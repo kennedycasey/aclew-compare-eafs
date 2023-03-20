@@ -1,6 +1,7 @@
 # rm(list = ls())
 library(tidyverse)
 library(gtools)
+library(phonfieldwork)
 source("0-Helper_CompareToGS.R")
 
 compare.files <- function(nw.filename, recording, native,
@@ -20,7 +21,7 @@ compare.files <- function(nw.filename, recording, native,
   # Input files
   nw.file <- read.annot(nw.filename)
   nw.file$code[which(is.na(nw.file$code))] <- "<empty>"
-  gs.file <- read.annot(paste0(recording, "-0GS0.txt"))
+  gs.file <- read.annot(paste0("eafs/", recording, "-0GS0.eaf"))
   ntvness <- ifelse(native == "Yes", "native", "NON-native")
   
   # Input arguments
