@@ -4,7 +4,7 @@ library(gtools)
 library(phonfieldwork)
 source("0-Helper_CompareToGS.R")
 
-compare.files <- function(nw.filename, recording, native,
+compare.files <- function(nw.filename, recording,
                           minute, coder, lab) {
   ################################################################################
   # Set up
@@ -12,7 +12,6 @@ compare.files <- function(nw.filename, recording, native,
   
   # nw.filename <- "VanDamFJ11-GS_Training_Round_1-TS.txt"
   # recording <- "VanFJ11"
-  # native <- "Yes"
   # minute <- 1
   # coder <- "MC"
   # lab <- "MC"
@@ -21,7 +20,6 @@ compare.files <- function(nw.filename, recording, native,
   nw.file <- read.annot(nw.filename)
   nw.file$code[which(is.na(nw.file$code))] <- "<empty>"
   gs.file <- read.annot(paste0("eafs/", recording, "-0GS0.eaf"))
-  ntvness <- ifelse(native == "Yes", "native", "NON-native")
   
   # Input arguments
   slice_sz <- 50 # size of time slices compared
@@ -29,17 +27,11 @@ compare.files <- function(nw.filename, recording, native,
   compare.stmt <- paste0("Comparing minute ", minute, " of recording ",
                         recording, " to the gold standard.")
   
-  coder.stmt <- paste0("Submitted by coder ", coder, " from the ", lab,
-                       " lab, who is a ", ntvness,
-                       " speaker of the language in the recording.")
+  coder.stmt <- paste0("Submitted by coder ", coder, " from the ", lab, " lab")
   
   min_overall_score <- 0.95 # minimum overall weighted score
   min_score_univ <- 0.85 # minumum score allowed on diarization and vcm
-  if (native == "Yes") {
-    min_score_lgsp <- 0.85 # minumum score allowed on lex, mwu, and xds
-  } else {
-    min_score_lgsp <- 0.75 # minumum score allowed on lex, mwu, and xds
-  }
+  min_score_lgsp <- 0.85 # minumum score allowed on lex, mwu, and xds
   
 
   ################################################################################
@@ -458,28 +450,18 @@ compare.files <- function(nw.filename, recording, native,
     replace_na(list(slice_match_n = 0)) %>%
     filter(slice_match_n < min_score_univ) %>%
     select(tier)
-  if (native == "Yes") {
-    subminscores.lgsp <- gs.tiers %>%
-      filter(tier != speaker & tier != "vcm@CHI") %>%
-      replace_na(list(slice_match_n = 0)) %>%
-      filter(slice_match_n < min_score_lgsp) %>%
-      select(tier)
-    overall.score <- round((
-      (chi.score * 0.35) +
-      (non.chi.score * 0.35) +
-      (chi.dep.score * 0.15) +
-      (xds.score * 0.15))*100,2)
-  } else {
-    subminscores.lgsp <- gs.tiers %>%
-      filter(grepl('xds@', tier)) %>%
-      replace_na(list(slice_match_n = 0)) %>%
-      filter(slice_match_n < min_score_lgsp) %>%
-      select(tier)
-    overall.score <- round((
-      (chi.score * 0.4) +
-      (non.chi.score * 0.34) +
-      (xds.score * 0.2))*100,2)
-  }
+  
+  subminscores.lgsp <- gs.tiers %>%
+    filter(tier != speaker & tier != "vcm@CHI") %>%
+    replace_na(list(slice_match_n = 0)) %>%
+    filter(slice_match_n < min_score_lgsp) %>%
+    select(tier)
+  overall.score <- round((
+    (chi.score * 0.35) +
+    (non.chi.score * 0.35) +
+    (chi.dep.score * 0.15) +
+    (xds.score * 0.15))*100,2)
+  
   subminscores <- bind_rows(subminscores.univ, subminscores.lgsp)
   if(nrow(subminscores) > 0) {
     submins <- subminscores$tier[1]
@@ -505,13 +487,8 @@ compare.files <- function(nw.filename, recording, native,
                       min_overall_score*100, "%", sep="")
   req.tiers.univ <- paste("- At least ", min_score_univ*100,
                      "% accuracy on ALL speaker tiers and vcm@CHI", sep="")
-  if (native == "Yes") {
-    req.tiers.lgsp <- paste("- At least ", min_score_lgsp*100,
-                       "% accuracy on ALL xds tiers, lex@CHI, and mwu@CHI (as applicable).", sep="")
-  } else {
-    req.tiers.lgsp <- paste("- At least ", min_score_lgsp*100,
-                       "% accuracy on ALL xds tiers.", sep="")
-  }
+  req.tiers.lgsp <- paste("- At least ", min_score_lgsp*100,
+                     "% accuracy on ALL xds tiers, lex@CHI, and mwu@CHI (as applicable).", sep="")
 
   # Prep error table for return
   errors.tbl <- errors.tbl %>%

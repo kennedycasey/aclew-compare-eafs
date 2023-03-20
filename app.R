@@ -32,13 +32,6 @@ ui <- fluidPage(
                      placeholder = 'Select a test minute below',
                      onInitialize = I('function() { this.setValue(""); }'))),
 
-      # Input: Annotated recording ----
-      selectizeInput("native", "Are you a native speaker of the language in the recording?",
-                   choices = c("Yes", "No"),
-                   options = list(
-                     placeholder = 'Select an option below',
-                     onInitialize = I('function() { this.setValue(""); }'))),
-
       # Input: Annotator's name ----
       textInput("coder", "Annotator name",
                 placeholder = "your first and last name"),
@@ -66,7 +59,6 @@ server <- function(input, output) {
         input$coder, input$PI)
     compare.files(input$file1$datapath,
                   input$recording,
-                  input$native,
                   as.numeric(input$minute),
                   input$coder,
                   input$PI)
