@@ -22,11 +22,8 @@ ui <- fluidPage(
                 accept = ".eaf"),
 
       # Input: Annotated minute ----
-      selectizeInput("minute", "Which minute do you want to test?",
-                   choices = 1:5,
-                   options = list(
-                     placeholder = 'Select a test minute below',
-                     onInitialize = I('function() { this.setValue(""); }'))),
+      textInput("minute", "Which minute do you want to test?",
+                placeholder = 'Enter a number or leave blank to compare full file'),
 
       # Input: Annotator's name ----
       textInput("coder", "Annotator name",
@@ -51,7 +48,7 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   report <- eventReactive(input$submit, {
-    req(input$file1, input$file2, input$minute,
+    req(input$file1, input$file2,
         input$coder, input$PI)
     compare.files(input$file1$datapath,
                   input$file2$datapath,

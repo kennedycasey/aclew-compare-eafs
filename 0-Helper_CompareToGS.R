@@ -6,8 +6,8 @@ read.annot <- function(filename) {
                 str_detect(tier_name, "\\@") ~ 
                   str_split(tier_name, "\\@", simplify = TRUE)[,2], 
                 !str_detect(tier_name, "\\@") ~ tier_name),
-              start = time_start, 
-              stop = time_end, 
+              start = time_start*1000, 
+              stop = time_end*1000, 
               duration = time_end - time_start, 
               code = content)
   return(annots)

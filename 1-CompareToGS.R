@@ -10,11 +10,12 @@ compare.files <- function(nw.filename, gs.filename,
   # Set up
   ################################################################################
   
-  # nw.filename <- "VanDamFJ11-GS_Training_Round_1-TS.txt"
+  # nw.filename <- "eafs/test.eaf"
+  # gs.filename <- "eafs/2337-0GS0-transcribed.eaf"
   # minute <- 1
   # coder <- "MC"
   # lab <- "MC"
-  
+
   # Input files
   nw.file <- read.annot(nw.filename)
   nw.file$code[which(is.na(nw.file$code))] <- "<empty>"
@@ -38,8 +39,8 @@ compare.files <- function(nw.filename, gs.filename,
   ################################################################################
   # Determine the onset and offset times of the segment to be compared
   # if minute is NA then the whole file is compared
-  seg_stt <- (minute-1)*60000
-  seg_end <- minute*60000
+  seg_stt <- ifelse(is.na(minute), 0, (minute - 1)*60000)
+  seg_end <- ifelse(is.na(minute), 5*60000, minute*60000)
   
 ### TYPICAL CASE: Last-chance mode ####
   # Match up the nw file tiers to the gold standard as closely as possible
