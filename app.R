@@ -5,7 +5,7 @@ source("1-CompareToGS.R")
 ui <- fluidPage(
 
   # App title ----
-  titlePanel("ACLEW Annotation Scheme: Gold Standard Test"),
+  titlePanel("Compare ACLEW Annotation Scheme eafs"),
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -14,27 +14,19 @@ ui <- fluidPage(
     sidebarPanel(
 
       # Input: Annotation file ----
-      fileInput("file1", "Choose your annotation file",
+      fileInput("file1", "Choose YOUR annotation file",
                 accept = ".eaf"),
       
       # Input: Annotation file ----
-      fileInput("file2", "Choose the gold-standard annotation file",
+      fileInput("file2", "Choose the GOLD-STANDARD annotation file",
                 accept = ".eaf"),
 
       # Input: Annotated minute ----
-      textInput("minute", "Which minute do you want to test?",
-                placeholder = 'Enter a number or leave blank to compare full file'),
+      textInput("minute", "Which minute do you want to test? Leave blank to compare full 5min file",
+                placeholder = 'Enter a number'),
       
       # Input: Optional ignore dependent tiers ----
       checkboxInput("ignore.dep", "Ignore all dependent tiers (xds, vcm, lex, mwu)?"),
-
-      # Input: Annotator's name ----
-      textInput("coder", "Annotator name",
-                placeholder = "your first and last name"),
-
-      # Input: Annotator's PI's name ----
-      textInput("PI", "Lab name",
-                placeholder = "your lab PI's last name"),
 
       # Submit button:
       actionButton("submit", "Update")
@@ -51,13 +43,10 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   report <- eventReactive(input$submit, {
-    req(input$file1, input$file2,
-        input$coder, input$PI)
+    req(input$file1, input$file2)
     compare.files(input$file1$datapath,
                   input$file2$datapath,
                   as.numeric(input$minute),
-                  input$coder,
-                  input$PI, 
                   input$ignore.dep)
   })
 
@@ -65,10 +54,6 @@ server <- function(input, output) {
     req(report())
     
     tagList(
-      tags$div(as.character(report()$compare.stmt),
-               tags$br(),
-               as.character(report()$coder.stmt),
-               tags$br()),
       tags$h1("Set up for evaluation"),
       tags$div("We matched the following GS tiers to your tiers:"),
       renderTable(report()$tier.equiv),

@@ -1,4 +1,4 @@
-# rm(list = ls())
+
 library(tidyverse)
 library(gtools)
 library(phonfieldwork)
@@ -9,12 +9,6 @@ compare.files <- function(nw.filename, gs.filename,
   ################################################################################
   # Set up
   ################################################################################
-  
-  # nw.filename <- "eafs/test.eaf"
-  # gs.filename <- "eafs/2337-0GS0-transcribed.eaf"
-  # minute <- 1
-  # coder <- "MC"
-  # lab <- "MC"
 
   # Input files
   nw.file <- read.annot(nw.filename, ignore.dep)
@@ -24,10 +18,6 @@ compare.files <- function(nw.filename, gs.filename,
   
   # Input arguments
   slice_sz <- 50 # size of time slices compared
-  
-  compare.stmt <- paste0("Comparing minute ", minute," to the gold standard.")
-  
-  coder.stmt <- paste0("Submitted by coder ", coder, " from the ", lab, " lab")
   
   min_overall_score <- 0.95 # minimum overall weighted score
   min_score_univ <- 0.85 # minumum score allowed on diarization and vcm
@@ -516,9 +506,7 @@ compare.files <- function(nw.filename, gs.filename,
       req.wscore = req.wscore,
       req.tiers.univ = req.tiers.univ,
       req.tiers.lgsp = req.tiers.lgsp,
-      errors.tbl = errors.tbl,
-      compare.stmt = compare.stmt,
-      coder.stmt = coder.stmt
+      errors.tbl = errors.tbl
     ))
 }
 
